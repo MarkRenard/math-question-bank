@@ -15,6 +15,7 @@ public class ProblemDao {
 
 	private Connection connection;
 	private PreparedStatement results;
+	private PreparedStatement newQuestion;
 
 	public ProblemDao() throws Exception {
 
@@ -22,8 +23,16 @@ public class ProblemDao {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mathprobdb1", "root", "");
 			
+			// Prepares statement that retrieves database entries
 			results = connection.prepareStatement(
-					"SELECT pid, content, order_num " + "FROM problem ORDER BY order_num DESC");
+					"SELECT pid, content, order_num " 
+					+ "FROM problem ORDER BY order_num DESC");
+			
+			// Prepares statement that enters a new problem into the database
+			newQuestion = connection.prepareStatement(
+					"INSERT INTO problem (content) "
+					+ "VALUES (?)");
+			
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			throw new UnavailableException(exception.getMessage());
@@ -51,6 +60,17 @@ public class ProblemDao {
 		}
 		
 		return problist;
+	}
+	
+	// This method adds a new question to the problem table if it's not empty
+	public boolean addQuestion(String question) throws SQLException {
+		if (question != null && question != "") {
+			newQuestion.setString(1, question);
+			newQuestion.execute();
+			return true;
+		}
+		
+		return false;
 	}
 
 }

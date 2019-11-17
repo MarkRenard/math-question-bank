@@ -24,12 +24,19 @@ public class ListMathServlet extends HttpServlet {
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
 		
+		String newQuestion = (String) request.getParameter("new-question");
+		System.out.println(newQuestion);
+		
 		try {
 			ProblemDao probdao = new ProblemDao();
-
+			
+			// Adds a new question to the database if one was set
+			probdao.addQuestion(newQuestion);
+			
+			// Retrieves the list of problems from the database
 			List<Problem> problist = probdao.getProblemList();
-
 			request.setAttribute("problist", problist);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,9 +46,6 @@ public class ListMathServlet extends HttpServlet {
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String newQuestion = (String) request.getParameter("new-question");
-		System.out.println(newQuestion);
-		
 		doGet(request, response);
 	}
 
