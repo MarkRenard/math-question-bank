@@ -47,6 +47,7 @@
 						<tr>
 							<td colspan="3">
 								<table width="100%">
+									<tr> ${requestScope.errormsg} </tr>
 								
 									<!--  New question elements -->
 									<tr>

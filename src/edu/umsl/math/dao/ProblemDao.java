@@ -16,6 +16,7 @@ public class ProblemDao {
 	private Connection connection;
 	private PreparedStatement results;
 	private PreparedStatement newQuestion;
+	private PreparedStatement problemsWithMatchingContent;
 
 	public ProblemDao() throws Exception {
 
@@ -32,6 +33,10 @@ public class ProblemDao {
 			newQuestion = connection.prepareStatement(
 					"INSERT INTO problem (content) "
 					+ "VALUES (?)");
+			
+			// Prepares statement that retrieves problems with matching content
+			problemsWithMatchingContent = connection.prepareStatement(
+					"SELECT * FROM problem WHERE content = ?");
 			
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -63,14 +68,19 @@ public class ProblemDao {
 	}
 	
 	// This method adds a new question to the problem table if it's not empty
-	public boolean addQuestion(String question) throws SQLException {
+	public void addQuestion(String question) throws SQLException {
 		if (question != null && question != "") {
 			newQuestion.setString(1, question);
 			newQuestion.execute();
-			return true;
 		}
+	}
+	
+	// This method returns true if there is no entry with matching content
+	public boolean problemIsUnique(String problemContent) throws SQLException {
+		problemsWithMatchingContent.setString(1, problemContent);
+		ResultSet rs = problemsWithMatchingContent.executeQuery();
 		
-		return false;
+		return !rs.next(); // False if the result set is non-empty
 	}
 
 }
