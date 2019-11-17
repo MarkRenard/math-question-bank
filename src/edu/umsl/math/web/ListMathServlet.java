@@ -28,7 +28,10 @@ public class ListMathServlet extends HttpServlet {
 		
 		// Gets a new question from the request if one exists
 		String newQuestion = (String) request.getParameter("new-question");
-		System.out.println(newQuestion);
+		System.out.println("New question:" + newQuestion);
+		
+		String newCategory = (String) request.getParameter("new-category");
+		System.out.println("New category:" + newCategory);
 		
 		try {
 			probdao = new ProblemDao();
@@ -43,8 +46,21 @@ public class ListMathServlet extends HttpServlet {
 				}
 			}
 			
+			// Adds a new question to the database if one was set
+			if(categoryIsValid(newCategory)) {
+				if (probdao.categoryIsUnique(newCategory)) {
+					probdao.addCategory(newCategory);
+				} else {
+					errorMsg = "Error: The category \"" 
+							+ newCategory + "\" already exists.";
+				}
+			}
+			
 			// Retrieves the list of problems from the database
 			List<Problem> problist = probdao.getProblemList();
+			
+			System.out.println(problist);
+			
 			request.setAttribute("problist", problist);
 			request.setAttribute("errormsg", errorMsg);
 			
@@ -62,6 +78,10 @@ public class ListMathServlet extends HttpServlet {
 	
 	// Validates the content of a new problem
 	private boolean problemIsValid(String str) {
+		return (str != null && str != "");
+	}
+	
+	private boolean categoryIsValid(String str) {
 		return (str != null && str != "");
 	}
 

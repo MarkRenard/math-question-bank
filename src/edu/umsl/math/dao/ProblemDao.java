@@ -16,7 +16,9 @@ public class ProblemDao {
 	private Connection connection;
 	private PreparedStatement results;
 	private PreparedStatement newQuestion;
-	private PreparedStatement problemsWithMatchingContent;
+	private PreparedStatement newCategory;
+	private PreparedStatement matchingProblems;
+	private PreparedStatement matchingCategories;
 
 	public ProblemDao() throws Exception {
 
@@ -34,9 +36,18 @@ public class ProblemDao {
 					"INSERT INTO problem (content) "
 					+ "VALUES (?)");
 			
+			// Prepares statement that enters a new category into the database
+			newCategory = connection.prepareStatement(
+					"INSERT INTO category (category_name) "
+					+ "VALUES (?)");
+			
 			// Prepares statement that retrieves problems with matching content
-			problemsWithMatchingContent = connection.prepareStatement(
+			matchingProblems = connection.prepareStatement(
 					"SELECT * FROM problem WHERE content = ?");
+			
+			// Prepares statement that retrieves matching categories
+			matchingCategories = connection.prepareStatement(
+					"SELECT * FROM category WHERE category_name = ?");
 			
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -67,7 +78,7 @@ public class ProblemDao {
 		return problist;
 	}
 	
-	// This method adds a new question to the problem table if it's not empty
+	// This method adds a new question to the problem table
 	public void addQuestion(String question) throws SQLException {
 		if (question != null && question != "") {
 			newQuestion.setString(1, question);
@@ -75,10 +86,26 @@ public class ProblemDao {
 		}
 	}
 	
-	// This method returns true if there is no entry with matching content
+	// This method adds a new category to the problem table
+	public void addCategory(String category_name) throws SQLException {
+		if (category_name != null && category_name != "") {
+			newCategory.setString(1, category_name);
+			newCategory.execute();
+		}
+	}
+	
+	// This method returns true if there is no problem with matching content
 	public boolean problemIsUnique(String problemContent) throws SQLException {
-		problemsWithMatchingContent.setString(1, problemContent);
-		ResultSet rs = problemsWithMatchingContent.executeQuery();
+		matchingProblems.setString(1, problemContent);
+		ResultSet rs = matchingProblems.executeQuery();
+		
+		return !rs.next(); // False if the result set is non-empty
+	}
+	
+	// This method returns true if there is no category with a matching name
+	public boolean categoryIsUnique(String categoryName) throws SQLException {
+		matchingCategories.setString(1, categoryName);
+		ResultSet rs = matchingCategories.executeQuery();
 		
 		return !rs.next(); // False if the result set is non-empty
 	}

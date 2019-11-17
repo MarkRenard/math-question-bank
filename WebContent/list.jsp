@@ -59,6 +59,16 @@
 										</td>
 									</tr>
 									
+									<!--  New category elements -->
+									<tr>
+										<td width="70%" class="text-center">
+											<input type="text" class="form-control" name="new-category"/>
+										</td>
+										<td width="30%">
+											<input type="submit" class="form-control" value="Enter Category" />		
+										</td>
+									</tr>
+									
 								</table>
 							</td>
 						</tr>
