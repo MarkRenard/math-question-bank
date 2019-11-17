@@ -15,6 +15,7 @@ public class ProblemDao {
 
 	private Connection connection;
 	private PreparedStatement results;
+	private PreparedStatement categories;
 	private PreparedStatement newQuestion;
 	private PreparedStatement newCategory;
 	private PreparedStatement matchingProblems;
@@ -26,10 +27,15 @@ public class ProblemDao {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mathprobdb1", "root", "");
 			
-			// Prepares statement that retrieves database entries
+			// Prepares statement that retrieves problems
 			results = connection.prepareStatement(
 					"SELECT pid, content, order_num " 
 					+ "FROM problem ORDER BY order_num DESC");
+			
+			// Prepares statement that retrieves categories
+			categories = connection.prepareStatement(
+					"SELECT cid, category_name "
+					+ "FROM category");
 			
 			// Prepares statement that enters a new problem into the database
 			newQuestion = connection.prepareStatement(
@@ -78,11 +84,39 @@ public class ProblemDao {
 		return problist;
 	}
 	
+	public List<Category> getCategoryList() throws SQLException {
+		List<Category> categorylist = new ArrayList<Category>();
+		
+		System.out.println("getCategoryList executing!");
+		
+		try {
+			ResultSet categoriesRS = categories.executeQuery();
+
+			while (categoriesRS.next()) {
+				Category category = new Category();
+
+				category.setCid(categoriesRS.getInt(1));
+				category.setCategoryName(categoriesRS.getString(2));
+
+				System.out.print(category.getCid());
+				System.out.print(category.getCategoryName());
+				
+				categorylist.add(category);
+			}
+			System.out.println("");
+			
+		} catch (SQLException sqlException) {
+			sqlException.printStackTrace();
+		}
+		
+		return categorylist;
+	}	
+	
 	// This method adds a new question to the problem table
 	public void addQuestion(String question) throws SQLException {
 		if (question != null && question != "") {
 			newQuestion.setString(1, question);
-			newQuestion.execute();
+			newQuestion.executeUpdate();
 		}
 	}
 	
@@ -90,7 +124,7 @@ public class ProblemDao {
 	public void addCategory(String category_name) throws SQLException {
 		if (category_name != null && category_name != "") {
 			newCategory.setString(1, category_name);
-			newCategory.execute();
+			newCategory.executeUpdate();
 		}
 	}
 	

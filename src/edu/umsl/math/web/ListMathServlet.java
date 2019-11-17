@@ -28,15 +28,16 @@ public class ListMathServlet extends HttpServlet {
 		
 		// Gets a new question from the request if one exists
 		String newQuestion = (String) request.getParameter("new-question");
-		System.out.println("New question:" + newQuestion);
+
 		
+		// Gets a new category from the request if one exists
 		String newCategory = (String) request.getParameter("new-category");
-		System.out.println("New category:" + newCategory);
+
 		
 		try {
 			probdao = new ProblemDao();
 			
-			// Adds a new question to the database if one was set
+			// Adds a new question to the database if it's nonempty and unique
 			if(problemIsValid(newQuestion)) {
 				if (probdao.problemIsUnique(newQuestion)) {
 					probdao.addQuestion(newQuestion);
@@ -46,7 +47,7 @@ public class ListMathServlet extends HttpServlet {
 				}
 			}
 			
-			// Adds a new question to the database if one was set
+			// Adds a new category to the database if it's nonempty and unique
 			if(categoryIsValid(newCategory)) {
 				if (probdao.categoryIsUnique(newCategory)) {
 					probdao.addCategory(newCategory);
@@ -59,9 +60,18 @@ public class ListMathServlet extends HttpServlet {
 			// Retrieves the list of problems from the database
 			List<Problem> problist = probdao.getProblemList();
 			
-			System.out.println(problist);
+			// Retrieves the list of categories from the database
+			List<Category> categorylist = probdao.getCategoryList();
 			
+			// Print statements for debugging
+			System.out.println("New question: " + newQuestion);
+			System.out.println("New category: " + newCategory);
+			System.out.println("Problem list: " + problist);
+			System.out.println("Category list: " + categorylist);
+			
+			// Sets attributes in request object
 			request.setAttribute("problist", problist);
+			request.setAttribute("categorylist", categorylist);
 			request.setAttribute("errormsg", errorMsg);
 			
 		} catch (Exception e) {
@@ -81,6 +91,7 @@ public class ListMathServlet extends HttpServlet {
 		return (str != null && str != "");
 	}
 	
+	// Validates the string for a new category
 	private boolean categoryIsValid(String str) {
 		return (str != null && str != "");
 	}
