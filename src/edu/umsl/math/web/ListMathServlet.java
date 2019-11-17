@@ -21,15 +21,11 @@ public class ListMathServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ProblemDao probdao = null;
-
+		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
 		
-		String newQuestion = (String) request.getParameter("new-question");
-		System.out.println(newQuestion);
-		
 		try {
-			probdao = new ProblemDao();
+			ProblemDao probdao = new ProblemDao();
 
 			List<Problem> problist = probdao.getProblemList();
 
@@ -43,6 +39,9 @@ public class ListMathServlet extends HttpServlet {
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String newQuestion = (String) request.getParameter("new-question");
+		System.out.println(newQuestion);
+		
 		doGet(request, response);
 	}
 
