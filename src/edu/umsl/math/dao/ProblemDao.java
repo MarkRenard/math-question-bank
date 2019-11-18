@@ -1,3 +1,11 @@
+/** ProblemsDao was created by Dr. He and modified by Mark Renard on 11/16/2019.
+ * 
+ *  This file defines a database access object that enables interaction with a
+ *  database called mathprobdb1, assuming it exists, is accessible via
+ *  //localhost:3306/mathprobdb1, and was created using problem.sql in the files
+ *  page on canvas.
+ */
+
 package edu.umsl.math.dao;
 
 import edu.umsl.math.beans.*;
@@ -14,20 +22,27 @@ import javax.servlet.UnavailableException;
 public class ProblemDao {
 
 	private Connection connection;
-	private PreparedStatement results;
-	private PreparedStatement problems;
-	private PreparedStatement categories;
-	private PreparedStatement newQuestion;
-	private PreparedStatement newCategory;
-	private PreparedStatement matchingProblems;
-	private PreparedStatement matchingCategories;
-	private PreparedStatement assignCategory;
+	
+	private PreparedStatement results;				// The default statement that selects all the entries
+	private PreparedStatement problems;				// Statement selecting problems with specified cid
+	private PreparedStatement categories;			// Statement selecting all entries in 'categories'
+	
+	private PreparedStatement newQuestion;			// Statement that inserts a new question into 'problem'
+	private PreparedStatement newCategory;			// Statement that inserts a new category into 'category'
+	private PreparedStatement assignCategory;		// Statement that inserts an entry into 'contains'
+	
+	private PreparedStatement matchingProblems;		// Statement selecting problems with the same content
+	private PreparedStatement matchingCategories;	// Statement selecting category with matching 'category_name'
+	private PreparedStatement matchingAssignment;	// Statement selecting matching entries in 'contains'
+
 
 	public ProblemDao() throws Exception {
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mathprobdb1", "root", "");
+			
+			createTables(); // Creates the tables 'contains' and 'category'
 			
 			// Prepares statement that retrieves problems and category ids
 			results = connection.prepareStatement(
@@ -67,6 +82,9 @@ public class ProblemDao {
 			matchingCategories = connection.prepareStatement(
 					"SELECT * FROM category WHERE category_name = ?");
 			
+			matchingAssignment = connection.prepareStatement(
+					"SELECT * FROM contains WHERE cid = ? AND pid = ?");
+			
 			// Prepares statement that assigns a problem to a category
 			assignCategory = connection.prepareStatement(
 					"INSERT INTO contains (cid, pid) values (?, ?)");
@@ -76,6 +94,25 @@ public class ProblemDao {
 			throw new UnavailableException(exception.getMessage());
 		}
 
+	}
+	
+	// Creates tables category and contains if the don't exist already
+	private void createTables() throws SQLException {
+		// Creates tables `category`
+		PreparedStatement createCategoryTable = connection.prepareStatement(
+				"CREATE TABLE IF NOT EXISTS `category` ( " +
+			    "`cid` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+			    "`category_name` varchar(256))");
+		createCategoryTable.execute();
+		
+		// Creates table `contains`
+		PreparedStatement createContainsTable = connection.prepareStatement(
+				"CREATE TABLE IF NOT EXISTS `contains` (" + 
+				"    `cid` int unsigned NOT NULL, " + 
+				"    `pid` int unsigned NOT NULL, " + 
+				"    FOREIGN KEY (`cid`) REFERENCES `category`(`cid`), " + 
+				"    FOREIGN KEY (`pid`) REFERENCES `problem` (`pid`))");
+		createContainsTable.execute();
 	}
 	
 	// Returns a list of problems with matching cid
@@ -114,6 +151,7 @@ public class ProblemDao {
 		return problist;
 	}
 	
+	// Returns all of the categories in the table 'contains'
 	public List<Category> getCategoryList() throws SQLException {
 		List<Category> categorylist = new ArrayList<Category>();
 		
@@ -158,10 +196,13 @@ public class ProblemDao {
 		}
 	}
 	
+	// This method inserts an entry with the passed cid and pid into 'contains'
 	public void assignCategoryToProblem(int cid, int pid) throws SQLException {
-		assignCategory.setInt(1, cid);
-		assignCategory.setInt(2, pid);
-		assignCategory.executeUpdate();
+		if (assignmentIsUnique(cid, pid)) {
+			assignCategory.setInt(1, cid);
+			assignCategory.setInt(2, pid);
+			assignCategory.executeUpdate();
+		}
 	}
 	
 	// This method returns true if there is no problem with matching content
@@ -176,6 +217,15 @@ public class ProblemDao {
 	public boolean categoryIsUnique(String categoryName) throws SQLException {
 		matchingCategories.setString(1, categoryName);
 		ResultSet rs = matchingCategories.executeQuery();
+		
+		return !rs.next(); // False if the result set is non-empty
+	}
+	
+	// This method returns true if there is no category with a matching name
+	public boolean assignmentIsUnique(int cid, int pid) throws SQLException {
+		matchingAssignment.setInt(1, cid);
+		matchingAssignment.setInt(2, pid);
+		ResultSet rs = matchingAssignment.executeQuery();
 		
 		return !rs.next(); // False if the result set is non-empty
 	}

@@ -1,3 +1,9 @@
+/** ListMathServlet.java was created by Dr. He and modified by Mark Renard on 11/16/2019.
+ * 
+ * This servlet interacts with the database mathprobdb1 via a ProblemDao object
+ * and forwards tabular data to list.jsp, where it is displayed.
+ */
+
 package edu.umsl.math.web;
 
 import java.io.IOException;
@@ -15,6 +21,7 @@ import edu.umsl.math.dao.ProblemDao;
 
 /**
  * Servlet implementation class ListMathServlet
+ * 
  */
 @WebServlet("/listmath")
 public class ListMathServlet extends HttpServlet {
@@ -93,7 +100,6 @@ public class ListMathServlet extends HttpServlet {
 			request.setAttribute("errormsg", errorMsg);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -110,8 +116,7 @@ public class ListMathServlet extends HttpServlet {
 		try {
 			idInt = Integer.parseInt(idString);
 		} catch (NumberFormatException e) {
-			System.out.println("ERROR: Invalid ID");
-			e.printStackTrace();
+			System.out.println("Can't convert ID: " + idString);
 		}
 		
 		return idInt;

@@ -1,4 +1,12 @@
-// This script provides functionality to otherwise hidden assignment buttons
+/** Assignment.js was created by Mark Renard on 11/17/2019.
+ *
+ * This script provides functionality to otherwise hidden assignment buttons
+ * as defined in list.jsp.
+ * 
+ * When the user selects an assignment category from a drop-down menu, the
+ * buttons next to the problems not in that category are displayed. Check
+ * marks appear near problems already in that category.
+ */
 
 $(document).ready(function(){
 	
@@ -8,30 +16,21 @@ $(document).ready(function(){
 		
 		// Sets category id in hidden form element
 		$("#assignment-cid").val(cid);
-		window.alert("Cid set: " + cid);
 		
 		prepareAssignmentButtons(cid);
-		
 	})
-	
-	// Shows only elements in the selected display category
-//	$('select[name="display-category"]').change(function(){
-//		var cid = $(this).val();
-//		
-//		showIffInCategory(".problem-row", cid, "block");
-//		
-//	})
 		
 	// Shows each assignment button not in the selected category, hides others
 	function prepareAssignmentButtons(cid){
-		hideIffNotInCategory(".assign-button", cid);
-		hideIffNotInCategory(".assign-glyphicon", cid);
+		hideIffInCategory(".assign-button", cid);
+		hideIffInCategory(".assign-glyphicon", cid);
 		showIffInCategory(".added-glyphicon", cid);
 	}
 	
 	// Hides elements of class elementClass with identical cid, shows others
-	function hideIffNotInCategory(elementClass, cid, display){
-		//Default display parameter
+	function hideIffInCategory(elementClass, cid, display){
+		
+		//Default display parameter is "inline"
 		var display = (typeof display !== 'undefined') ? display : "inline";
 		
 		$(elementClass).each(function(){
@@ -46,7 +45,7 @@ $(document).ready(function(){
 	// Shows elements of class elementClass with identical cid, hides others
 	function showIffInCategory(elementClass, cid, display){
 		
-		//Default display parameter
+		//Default display parameter is "inline"
 		var display = (typeof display !== 'undefined') ? display : "inline";
 		
 		$(elementClass).each(function(){
@@ -64,7 +63,6 @@ $(document).ready(function(){
 		
 		// Sets problem id in hidden form element
 		$("#assignment-pid").val(pid);
-		window.alert("Assignment pid set: " + pid)
 		
 		$(this).attr("type", "submit");
 	})

@@ -1,3 +1,9 @@
+/** Problem.java was created by Dr. He and modified by Mark Renard on 11/16/2019.
+ * 
+ *  This class defines a bean designed to store problems from the database
+ *  mathprobdb1 as defined in problem.sql in the files section on canvas.
+ */
+
 package edu.umsl.math.beans;
 
 public class Problem {

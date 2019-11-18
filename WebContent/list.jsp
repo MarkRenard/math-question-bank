@@ -1,3 +1,10 @@
+<!-- 
+	 list.jsp was created by Dr. He and modified by Mark Renard on 11/16/2019.
+	 
+	 This jsp file displays a table of math problems and allows the user to
+	 categorize questions and enter new problems and categories.
+-->
+
 <%@ page import="java.util.*"%>
 <%@ page import="edu.umsl.math.beans.*"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -31,9 +38,6 @@
 		}
 	};
 </script>
-
-<!-- CSS to hide Assign buttons by default -->
-<!-- <link rel="stylesheet" type="text/css" href="css/AssignButtons.css"> -->
 
 <!-- JavaScript file that shows assign buttons for problems NOT in selected category -->
 <script src="js/Assignment.js"></script>
