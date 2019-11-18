@@ -56,6 +56,25 @@
 								<table width="100%">
 									<tr> ${requestScope.errormsg} </tr>
 									
+									<!-- Drop-down list of categories for display -->
+									<tr>
+										<form action="listmath" method="POST">
+											<td>
+												<select name="display-category" size=1>
+													<option value="0" disabled selected>Select a Category</option>
+													<option value="0"> All </option>
+													<% for (Category category : mycategorylist) { %>
+												 			<option value="<%=category.getCid() %>"><%=category.getCategoryName() %></option>
+												 	<% } %>
+												
+												</select>
+											</td>
+											<td>
+												<input type="submit" class="form-control" value="Display Category" />												
+											</td>
+										</form>
+									</tr>
+									
 									<!-- New question form -->
 									<form action="listmath" method="POST">
 										<tr>
@@ -82,14 +101,17 @@
 									
 									<!-- Drop-down list of categories for assignment -->
 									<tr>
-										<div id="assigment-label">Assign to Category </div>
-										<select name="assignment-category" size=1>
-											<option value="" disabled selected>Select a Category</option>
-											<% for (Category category : mycategorylist) { %>
-										 			<option value="<%=category.getCid() %>"><%=category.getCategoryName() %></option>
-										 	<% } %>
-										
-										</select>
+										<td>
+											<select name="assignment-category" size=1>
+												<option value="" disabled selected>Select a Category</option>
+												<% for (Category category : mycategorylist) { %>
+											 			<option value="<%=category.getCid() %>"><%=category.getCategoryName() %></option>
+											 	<% } %>										
+											</select>
+										</td>
+										<td>
+											<div id="assigment-label">Assign to Category </div>
+										</td>
 									</tr>
 									
 								</table>
@@ -107,7 +129,7 @@
 							<%
 								for (Problem prob : myproblist) {
 							%>
-							<tr>
+							<tr class="problem-row" cid="<%=prob.getCid() %>">
 								<!-- pid column -->
 								<td id="pid<%=prob.getPid()%>" width="8%" class="text-center"><%=prob.getPid()%></td>
 								

@@ -13,6 +13,14 @@ $(document).ready(function(){
 		prepareAssignmentButtons(cid);
 		
 	})
+	
+	// Shows only elements in the selected display category
+//	$('select[name="display-category"]').change(function(){
+//		var cid = $(this).val();
+//		
+//		showIffInCategory(".problem-row", cid, "block");
+//		
+//	})
 		
 	// Shows each assignment button not in the selected category, hides others
 	function prepareAssignmentButtons(cid){

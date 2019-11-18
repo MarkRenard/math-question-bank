@@ -23,8 +23,11 @@ public class ListMathServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String newQuestion;			// Stores a new question from the request if one exists
 		String newCategory;			// Stores a new category from the request if one exists
+		int displayCategory;		// Stores the category of problem to be displayed
+		
 		int assignmentPid = -1;		// The problem id for an assignment operation
 		int assignmentCid = -1;		// The category id for an assignment operation
+		
 		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
 		
@@ -38,6 +41,8 @@ public class ListMathServlet extends HttpServlet {
 		// Retrieves new problem IDs and category IDs from the request and perform validation
 		assignmentPid = validatedId((String) request.getParameter("assignment-pid"));
 		assignmentCid = validatedId((String) request.getParameter("assignment-cid"));
+		
+		displayCategory = validatedId((String)request.getParameter("display-category"));
 			
 		try {
 			probdao = new ProblemDao();
@@ -68,14 +73,17 @@ public class ListMathServlet extends HttpServlet {
 			}
 			
 			// Retrieves lists from the database
-			List<Problem> problist = probdao.getProblemList();
+			List<Problem> problist = probdao.getProblemList(displayCategory);
 			List<Category> categorylist = probdao.getCategoryList();
 			
 			// Print statements for debugging
 			System.out.println("New question: " + newQuestion);
 			System.out.println("New category: " + newCategory);
+			System.out.println("Display category: " + displayCategory);
+	
 			System.out.println("Assignment pid: " + assignmentPid);
 			System.out.println("Assignment cid: " + assignmentCid);
+			
 			System.out.println("Problem list: " + problist);
 			System.out.println("Category list: " + categorylist + "\n");
 			

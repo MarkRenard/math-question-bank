@@ -15,6 +15,7 @@ public class ProblemDao {
 
 	private Connection connection;
 	private PreparedStatement results;
+	private PreparedStatement problems;
 	private PreparedStatement categories;
 	private PreparedStatement newQuestion;
 	private PreparedStatement newCategory;
@@ -33,6 +34,14 @@ public class ProblemDao {
 					"SELECT P.pid, content, order_num, cid " +
 					"FROM problem P " +
 					"LEFT OUTER JOIN contains C ON P.pid = C.pid " +
+					"ORDER BY order_num");
+			
+			// Prepares statement that retrieves problems and category ids in a particular category			
+			problems = connection.prepareStatement(
+					"SELECT P.pid, content, order_num, cid " +
+					"FROM problem P " +
+					"LEFT OUTER JOIN contains C ON P.pid = C.pid " +
+					"WHERE cid = ? " +
 					"ORDER BY order_num");
 			
 			// Prepares statement that retrieves categories
@@ -69,20 +78,33 @@ public class ProblemDao {
 
 	}
 	
-	public List<Problem> getProblemList() throws SQLException {
+	// Returns a list of problems with matching cid
+	public List<Problem> getProblemList(int cid) throws SQLException {
 		List<Problem> problist = new ArrayList<Problem>();
+		PreparedStatement statement;
 		
+		// Selects query based on argument
+		if (cid < 1) {
+			statement = results;
+		} else {
+			statement = problems;
+			statement.setInt(1, cid);
+		}
+		
+		// Retrieves problem list
 		try {
-			ResultSet resultsRS = results.executeQuery();
+			ResultSet resultsRS = statement.executeQuery();
 
 			while (resultsRS.next()) {
 				Problem prob = new Problem();
 
+				// Sets properties of each problem bean
 				prob.setPid(resultsRS.getInt(1));
 				prob.setContent(resultsRS.getString(2));
 				prob.setOrder_num(resultsRS.getInt(3));
 				prob.setCid(resultsRS.getInt(4));
 
+				// Adds each problem to the list
 				problist.add(prob);
 			}
 		} catch (SQLException sqlException) {
