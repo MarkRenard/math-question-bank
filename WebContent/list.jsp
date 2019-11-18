@@ -32,6 +32,12 @@
 	};
 </script>
 
+<!-- CSS to hide Assign buttons by default -->
+<!-- <link rel="stylesheet" type="text/css" href="css/AssignButtons.css"> -->
+
+<!-- JavaScript file that shows assign buttons for problems NOT in selected category -->
+<script src="js/Assignment.js"></script>
+
 <title>Math Question Bank</title>
 </head>
 <body>
@@ -53,7 +59,7 @@
 								<table width="100%">
 									<tr> ${requestScope.errormsg} </tr>
 								
-									<!--  New question elements -->
+									<!--  New question form elements -->
 									<tr>
 										<td width="70%" class="text-center">
 											<input type="text" class="form-control" name="new-question"/>
@@ -63,7 +69,7 @@
 										</td>
 									</tr>
 									
-									<!--  New category elements -->
+									<!--  New category form elements -->
 									<tr>
 										<td width="70%" class="text-center">
 											<input type="text" class="form-control" name="new-category"/>
@@ -75,27 +81,36 @@
 									
 									<!-- Drop-down list of categories for assignment -->
 									<tr>
-										 <div class="dropdown">
-										 	<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"> Assign to Category
-										 	<span class="caret"></span></button>
-										 	<ul class="dropdown-menu">
-										 		<% for (Category category : mycategorylist) { %>
-										 			<li><a href="#"><%=category.getCategoryName() %></a></li>
-										 		<% } %>
-											</ul>
-										</div> 
+										<div id="assigment-label">Assign to Category </div>
+										<select name="assignment-category" size=1>
+											<option value="" disabled selected>Select a Category</option>
+											<% for (Category category : mycategorylist) { %>
+										 			<option value="<%=category.getCid() %>"><%=category.getCategoryName() %></option>
+										 	<% } %>
+										
+										</select>
 									</tr>
 									
 								</table>
 							</td>
 						</tr>
+						<!-- Table of problems -->
 						<%
 							for (Problem prob : myproblist) {
 						%>
 						<tr>
+							<!-- pid column -->
 							<td id="pid<%=prob.getPid()%>" width="8%" class="text-center"><%=prob.getPid()%></td>
+							
+							<!-- Problem content column -->
 							<td width="84%"><%=prob.getContent()%></td>
+							
+							<!-- Button column -->
 							<td width="8%">
+								<button type="button" class="btn btn-default btn-sm assign-button" style="display:none" cid="${prob.cid}">
+					        	<span class="glyphicon glyphicon-plus assign-glyphicon" style="display:none" cid="${prob.cid}">Assign</span>
+					        </button>
+							
 							</td>
 						</tr>
 						<%

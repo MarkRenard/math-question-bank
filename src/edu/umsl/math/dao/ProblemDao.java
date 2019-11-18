@@ -27,10 +27,12 @@ public class ProblemDao {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mathprobdb1", "root", "");
 			
-			// Prepares statement that retrieves problems
+			// Prepares statement that retrieves problems and category ids
 			results = connection.prepareStatement(
-					"SELECT pid, content, order_num " 
-					+ "FROM problem ORDER BY order_num DESC");
+					"SELECT P.pid, content, order_num, cid " +
+					"FROM problem P " +
+					"LEFT OUTER JOIN contains C ON P.pid = C.pid " +
+					"ORDER BY order_num");
 			
 			// Prepares statement that retrieves categories
 			categories = connection.prepareStatement(
@@ -74,6 +76,7 @@ public class ProblemDao {
 				prob.setPid(resultsRS.getInt(1));
 				prob.setContent(resultsRS.getString(2));
 				prob.setOrder_num(resultsRS.getInt(3));
+				prob.setCid(resultsRS.getInt(4));
 
 				problist.add(prob);
 			}

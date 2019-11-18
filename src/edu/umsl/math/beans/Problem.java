@@ -5,6 +5,7 @@ public class Problem {
 	private int pid;
 	private String content;
 	private int order_num;
+	private int cid;
 	
 	public int getPid() {
 		return pid;
@@ -23,6 +24,14 @@ public class Problem {
 	}
 	public void setOrder_num(int order_num) {
 		this.order_num = order_num;
+	}
+	
+	public int getCid() {
+		return cid;
+	}
+	
+	public void setCid(int cid) {
+		this.cid = cid;
 	}
 
 	
