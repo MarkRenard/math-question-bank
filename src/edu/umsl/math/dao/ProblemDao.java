@@ -20,6 +20,7 @@ public class ProblemDao {
 	private PreparedStatement newCategory;
 	private PreparedStatement matchingProblems;
 	private PreparedStatement matchingCategories;
+	private PreparedStatement assignCategory;
 
 	public ProblemDao() throws Exception {
 
@@ -56,6 +57,10 @@ public class ProblemDao {
 			// Prepares statement that retrieves matching categories
 			matchingCategories = connection.prepareStatement(
 					"SELECT * FROM category WHERE category_name = ?");
+			
+			// Prepares statement that assigns a problem to a category
+			assignCategory = connection.prepareStatement(
+					"INSERT INTO contains (cid, pid) values (?, ?)");
 			
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -129,6 +134,12 @@ public class ProblemDao {
 			newCategory.setString(1, category_name);
 			newCategory.executeUpdate();
 		}
+	}
+	
+	public void assignCategoryToProblem(int cid, int pid) throws SQLException {
+		assignCategory.setInt(1, cid);
+		assignCategory.setInt(2, pid);
+		assignCategory.executeUpdate();
 	}
 	
 	// This method returns true if there is no problem with matching content

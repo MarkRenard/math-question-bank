@@ -21,19 +21,24 @@ public class ListMathServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String errorMsg = null;  // Message to display on error
+		String newQuestion;			// Stores a new question from the request if one exists
+		String newCategory;			// Stores a new category from the request if one exists
+		int assignmentPid = -1;		// The problem id for an assignment operation
+		int assignmentCid = -1;		// The category id for an assignment operation
+		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
+		
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
 		
-		// Gets a new question from the request if one exists
-		String newQuestion = (String) request.getParameter("new-question");
-
+		// Retrieves new questions or categories
+		newQuestion = (String) request.getParameter("new-question");
+		newCategory = (String) request.getParameter("new-category");
 		
-		// Gets a new category from the request if one exists
-		String newCategory = (String) request.getParameter("new-category");
-
-		
+		// Retrieves new problem IDs and category IDs from the request and perform validation
+		assignmentPid = validatedId((String) request.getParameter("assignment-pid"));
+		assignmentCid = validatedId((String) request.getParameter("assignment-cid"));
+			
 		try {
 			probdao = new ProblemDao();
 			
@@ -57,17 +62,22 @@ public class ListMathServlet extends HttpServlet {
 				}
 			}
 			
-			// Retrieves the list of problems from the database
-			List<Problem> problist = probdao.getProblemList();
+			// Performs category assignment if a category has been assigned
+			if (assignmentPid > 0 && assignmentCid > 0) {
+				probdao.assignCategoryToProblem(assignmentCid, assignmentPid);
+			}
 			
-			// Retrieves the list of categories from the database
+			// Retrieves lists from the database
+			List<Problem> problist = probdao.getProblemList();
 			List<Category> categorylist = probdao.getCategoryList();
 			
 			// Print statements for debugging
 			System.out.println("New question: " + newQuestion);
 			System.out.println("New category: " + newCategory);
+			System.out.println("Assignment pid: " + assignmentPid);
+			System.out.println("Assignment cid: " + assignmentCid);
 			System.out.println("Problem list: " + problist);
-			System.out.println("Category list: " + categorylist);
+			System.out.println("Category list: " + categorylist + "\n");
 			
 			// Sets attributes in request object
 			request.setAttribute("problist", problist);
@@ -86,13 +96,26 @@ public class ListMathServlet extends HttpServlet {
 		doGet(request, response);
 	}
 	
+	// Returns a parsed int or -1 if the ID is invalid
+	private static int validatedId(String idString) {
+		int idInt = -1;
+		try {
+			idInt = Integer.parseInt(idString);
+		} catch (NumberFormatException e) {
+			System.out.println("ERROR: Invalid ID");
+			e.printStackTrace();
+		}
+		
+		return idInt;
+	}
+	
 	// Validates the content of a new problem
-	private boolean problemIsValid(String str) {
+	private static boolean problemIsValid(String str) {
 		return (str != null && str != "");
 	}
 	
 	// Validates the string for a new category
-	private boolean categoryIsValid(String str) {
+	private static boolean categoryIsValid(String str) {
 		return (str != null && str != "");
 	}
 

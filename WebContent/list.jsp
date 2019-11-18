@@ -48,9 +48,6 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-offset-2 col-md-8">
-			
-				<!-- Buttons in form submit requests to servlet -->
-				<form action="listmath" method="POST">
 					<table width="100%" class="table table-bordered table-striped">
 					
 						<!-- Top-of-page form elements -->
@@ -58,26 +55,30 @@
 							<td colspan="3">
 								<table width="100%">
 									<tr> ${requestScope.errormsg} </tr>
-								
-									<!--  New question form elements -->
-									<tr>
-										<td width="70%" class="text-center">
-											<input type="text" class="form-control" name="new-question"/>
-										</td>
-										<td width="30%">
-											<input type="submit" class="form-control" value="Enter Question" />		
-										</td>
-									</tr>
 									
-									<!--  New category form elements -->
-									<tr>
-										<td width="70%" class="text-center">
-											<input type="text" class="form-control" name="new-category"/>
-										</td>
-										<td width="30%">
-											<input type="submit" class="form-control" value="Enter Category" />		
-										</td>
-									</tr>
+									<!-- New question form -->
+									<form action="listmath" method="POST">
+										<tr>
+											<td width="70%" class="text-center">
+												<input type="text" class="form-control" name="new-question"/>
+											</td>
+											<td width="30%">
+												<input type="submit" class="form-control" value="Enter Question" />		
+											</td>
+										</tr>
+									</form>
+										
+									<!--  New category form -->
+									<form action="listmath" method="POST">
+										<tr>
+											<td width="70%" class="text-center">
+												<input type="text" class="form-control" name="new-category"/>
+											</td>
+											<td width="30%">
+												<input type="submit" class="form-control" value="Enter Category" />		
+											</td>
+										</tr>
+									</form>
 									
 									<!-- Drop-down list of categories for assignment -->
 									<tr>
@@ -94,30 +95,38 @@
 								</table>
 							</td>
 						</tr>
-						<!-- Table of problems -->
-						<%
-							for (Problem prob : myproblist) {
-						%>
-						<tr>
-							<!-- pid column -->
-							<td id="pid<%=prob.getPid()%>" width="8%" class="text-center"><%=prob.getPid()%></td>
-							
-							<!-- Problem content column -->
-							<td width="84%"><%=prob.getContent()%></td>
-							
-							<!-- Button column -->
-							<td width="8%">
-								<button type="button" class="btn btn-default btn-sm assign-button" style="display:none" cid="${prob.cid}">
-					        	<span class="glyphicon glyphicon-plus assign-glyphicon" style="display:none" cid="${prob.cid}">Assign</span>
-					        </button>
-							
-							</td>
-						</tr>
-						<%
-							}
-						%>
-					</table>
-				</form>
+						
+						<!-- Category assignment form -->
+						<form action="listmath" method="POST">
+
+							<!-- Hidden form elements -->
+							<input type="hidden" id="assignment-cid" name="assignment-cid">
+							<input type="hidden" id="assignment-pid" name="assignment-pid">
+						
+							<!-- Table of problems -->
+							<%
+								for (Problem prob : myproblist) {
+							%>
+							<tr>
+								<!-- pid column -->
+								<td id="pid<%=prob.getPid()%>" width="8%" class="text-center"><%=prob.getPid()%></td>
+								
+								<!-- Problem content column -->
+								<td width="84%"><%=prob.getContent()%></td>
+								
+								<!-- Button column -->
+								<td width="8%">
+									<button type="button" class="btn btn-default btn-sm assign-button" style="display:none" cid="<%=prob.getCid() %>" pid="<%=prob.getPid() %>">
+						        		<span class="glyphicon glyphicon-plus assign-glyphicon" style="display:none" cid="<%=prob.getCid() %>" pid="<%=prob.getPid() %>">Assign</span>
+						        	</button>
+									<span class="glyphicon glyphicon-check added-glyphicon" style="display:none" cid="<%=prob.getCid() %>" pid="<%=prob.getPid() %>">Added</span>
+								</td>
+							</tr>
+							<%
+								}
+							%>
+						</form>
+				</table>
 				
 			</div>
 		</div>
