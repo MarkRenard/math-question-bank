@@ -22,10 +22,13 @@ $(document).ready(function(){
 	}
 	
 	// Hides elements of class elementClass with identical cid, shows others
-	function hideIffNotInCategory(elementClass, cid){
+	function hideIffNotInCategory(elementClass, cid, display){
+		//Default display parameter
+		var display = (typeof display !== 'undefined') ? display : "inline";
+		
 		$(elementClass).each(function(){
 			if ($(this).attr("cid") != cid){
-				$(this).attr("style", "display: inline");
+				$(this).attr("style", "display: " + display);
 			} else {
 				$(this).attr("style", "display: none");
 			}
@@ -33,10 +36,14 @@ $(document).ready(function(){
 	}
 	
 	// Shows elements of class elementClass with identical cid, hides others
-	function showIffInCategory(elementClass, cid){
+	function showIffInCategory(elementClass, cid, display){
+		
+		//Default display parameter
+		var display = (typeof display !== 'undefined') ? display : "inline";
+		
 		$(elementClass).each(function(){
 			if ($(this).attr("cid") == cid){
-				$(this).attr("style", "display: inline");
+				$(this).attr("style", "display: " + display);
 			} else {
 				$(this).attr("style", "display: none");
 			}
