@@ -16,13 +16,13 @@ $(document).ready(function(){
 		
 	// Shows each assignment button not in the selected category, hides others
 	function prepareAssignmentButtons(cid){
-		showClassIfNotInCategory(".assign-button", cid);
-		showClassIfNotInCategory(".assign-glyphicon", cid);
-		showClassIfInCategory(".added-glyphicon", cid);
+		hideIffNotInCategory(".assign-button", cid);
+		hideIffNotInCategory(".assign-glyphicon", cid);
+		showIffInCategory(".added-glyphicon", cid);
 	}
 	
 	// Hides elements of class elementClass with identical cid, shows others
-	function showClassIfNotInCategory(elementClass, cid){
+	function hideIffNotInCategory(elementClass, cid){
 		$(elementClass).each(function(){
 			if ($(this).attr("cid") != cid){
 				$(this).attr("style", "display: inline");
@@ -33,7 +33,7 @@ $(document).ready(function(){
 	}
 	
 	// Shows elements of class elementClass with identical cid, hides others
-	function showClassIfInCategory(elementClass, cid){
+	function showIffInCategory(elementClass, cid){
 		$(elementClass).each(function(){
 			if ($(this).attr("cid") == cid){
 				$(this).attr("style", "display: inline");
