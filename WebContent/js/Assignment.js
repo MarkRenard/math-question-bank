@@ -16,25 +16,25 @@ $(document).ready(function(){
 		
 	// Shows each assignment button not in the selected category, hides others
 	function prepareAssignmentButtons(cid){
-		hideIffInCategory(".assign-button", cid);
-		hideIffInCategory(".assign-glyphicon", cid);
+		hideIffNotInCategory(".assign-button", cid);
+		hideIffNotInCategory(".assign-glyphicon", cid);
 		showIffInCategory(".added-glyphicon", cid);
 	}
 	
-	// Hides elements of class identifier with identical cid, shows others
-	function hideIffInCategory(identifier, cid){
-		$(identifier).each(function(){
-			if ($(this).attr("cid") == cid){
-				$(this).attr("style", "display: none");
-			} else {
+	// Hides elements of class elementClass with identical cid, shows others
+	function hideIffNotInCategory(elementClass, cid){
+		$(elementClass).each(function(){
+			if ($(this).attr("cid") != cid){
 				$(this).attr("style", "display: inline");
+			} else {
+				$(this).attr("style", "display: none");
 			}
 		})
 	}
 	
-	// Shows elements of class identifier with identical cid, hides others
-	function showIffInCategory(identifier, cid){
-		$(identifier).each(function(){
+	// Shows elements of class elementClass with identical cid, hides others
+	function showIffInCategory(elementClass, cid){
+		$(elementClass).each(function(){
 			if ($(this).attr("cid") == cid){
 				$(this).attr("style", "display: inline");
 			} else {
