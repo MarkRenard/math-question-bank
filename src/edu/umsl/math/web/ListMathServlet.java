@@ -7,6 +7,7 @@
 package edu.umsl.math.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +42,8 @@ public class ListMathServlet extends HttpServlet {
 		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
 		
-		List<String> newKeywordsList;	// List of keywords to add to the database
+		// List of keywords to add to the database
+		List<String> newKeywordsList = new ArrayList<String>();	
 		
 		System.out.println("listmath servlet running!");
 		
@@ -101,6 +103,7 @@ public class ListMathServlet extends HttpServlet {
 			System.out.println("New question: " + newQuestion);
 			System.out.println("New category: " + newCategory);
 			System.out.println("Display category: " + displayCategory);
+			System.out.println("New keywords: " + listToString(newKeywordsList));
 	
 			System.out.println("Assignment pid: " + assignmentPid);
 			System.out.println("Assignment cid: " + assignmentCid);
@@ -149,6 +152,19 @@ public class ListMathServlet extends HttpServlet {
 	// Validates the string of new keywords
 	private static boolean keywordsAreValid(String str) {
 		return (str != null && str != "");
+	}
+	
+	// Returns comma separated string from a list
+	private static <T> String listToString (List<T> list){
+		if (list.size() < 1) return "";
+		
+		StringBuilder strb = new StringBuilder((String) list.get(0) );
+		for(int i = 1; i < list.size(); i++) {
+			strb.append(", ");
+			strb.append((String) list.get(i));
+		}
+		
+		return strb.toString();
 	}
 
 }
