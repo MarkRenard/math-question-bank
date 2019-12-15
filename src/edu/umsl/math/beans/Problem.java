@@ -40,5 +40,10 @@ public class Problem {
 		this.cid = cid;
 	}
 
-	
+	public boolean equals(Problem prob) {
+		return this.pid == prob.pid
+				&& this.content == prob.content
+				&& this.order_num == prob.order_num
+				&& this.cid == prob.cid;
+	}
 }

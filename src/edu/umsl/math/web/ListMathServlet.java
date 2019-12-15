@@ -29,10 +29,12 @@ import edu.umsl.math.dao.ProblemDao;
 public class ListMathServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		String newQuestion;			// Stores a new question from the request if one exists
 		String newCategory;			// Stores a new category from the request if one exists
 		String newKeywords;			// String of new comma separated keywords, if they exist
+		String keywordSearch;		// Keyword search query
 		
 		int assignmentPid = -1;		// The problem id for an assignment operation
 		int assignmentCid = -1;		// The category id for an assignment operation
@@ -42,23 +44,27 @@ public class ListMathServlet extends HttpServlet {
 		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
 		
-		// List of keywords to add to the database
-		List<String> newKeywordsList = new ArrayList<String>();	
+		List<String> newKeywordsList;	// Keywords to be add to the database
+		List<Problem> problist;			// Problems to display
+		List<Category> categorylist;	// Categories to display in the categories drop-down menu
 		
-		System.out.println("listmath servlet running!");
+		// Initializes lists
+		newKeywordsList = new ArrayList<String>();
+		problist = new ArrayList<Problem>();
+		categorylist = new ArrayList<Category>();
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
 		
-		// Retrieves new questions, categories, or keywords
+		// Retrieves new questions, categories, keywords, or search terms
 		newQuestion = (String) request.getParameter("new-question");
 		newCategory = (String) request.getParameter("new-category");
 		newKeywords = (String) request.getParameter("new-keywords");
+		keywordSearch = (String) request.getParameter("keyword-search");
 		
 		// Retrieves new problem IDs and category IDs from the request and perform validation
 		assignmentPid = validatedId((String) request.getParameter("assignment-pid"));
 		assignmentCid = validatedId((String) request.getParameter("assignment-cid"));
 		keywordsPid = validatedId((String) request.getParameter("keywords-pid"));
-		
 		displayCategory = validatedId((String)request.getParameter("display-category"));
 		
 			
@@ -90,15 +96,22 @@ public class ListMathServlet extends HttpServlet {
 				probdao.assignCategoryToProblem(assignmentCid, assignmentPid);
 			}
 			
-			// Adds new keywords to the database
+			// Adds new keywords to the database, associates with pid
 			if (keywordsAreValid(newKeywords)) {
 				newKeywordsList = Arrays.asList(newKeywords.split(","));
 				probdao.addKeywords(newKeywordsList, keywordsPid);
 			}
 			
-			// Retrieves lists from the database
-			List<Problem> problist = probdao.getProblemList(displayCategory);
-			List<Category> categorylist = probdao.getCategoryList();
+			// Retrieves search results if a search query was entered, all problems otherwise
+			if (keywordSearch != null && keywordSearch != "") {
+				List<String> searchTerms = Arrays.asList(keywordSearch.split(","));
+				problist = probdao.getSearchResults(searchTerms);
+			} else {
+				problist = probdao.getProblemList(displayCategory);
+			}
+			
+			// Retrieves the list of categories from the database
+			categorylist = probdao.getCategoryList();
 			
 			// Print statements for debugging
 			System.out.println("New question: " + newQuestion);
@@ -124,7 +137,8 @@ public class ListMathServlet extends HttpServlet {
 		dispatcher.forward(request, response);
 	}
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		doGet(request, response);
 	}
 	

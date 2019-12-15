@@ -60,6 +60,18 @@
 								<table width="100%">
 									<tr> ${requestScope.errormsg} </tr>
 									
+									<!-- Keyword search form -->
+									<form id="new-keywords-form" action="listmath" method="GET">
+										<tr>
+											<td width="70%" class="text-center">
+												<input id="keyword-search-text" type="text" class="form-control" name="keyword-search"/>
+											</td>
+											<td width="30%">
+												<input id="keyword-search-submit" type="submit" class="form-control" value="Keyword Search" />		
+											</td>
+										</tr>
+									</form>
+									
 									<!-- Drop-down list of categories for display -->
 									<tr>
 										<form action="listmath" method="GET">

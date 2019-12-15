@@ -15,6 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.UnavailableException;
@@ -23,20 +25,22 @@ public class ProblemDao {
 
 	private Connection connection;
 	
-	private PreparedStatement results;				// The default statement that selects all the entries
-	private PreparedStatement problems;				// Statement selecting problems with specified cid
-	private PreparedStatement categories;			// Statement selecting all entries in 'categories'
+	private PreparedStatement results;			// The default statement that selects all the entries
+	private PreparedStatement problems;			// Statement selecting problems with specified cid
+	private PreparedStatement search;			// Statement selecting problems with matching associated keywords
+	private PreparedStatement categories;		// Statement selecting all entries in 'categories'
 	
-	private PreparedStatement newQuestion;			// Statement that inserts a new question into 'problem'
-	private PreparedStatement newCategory;			// Statement that inserts a new category into 'category'
-	private PreparedStatement newKeyword;			// statement that inserts a new keyword into 'keywords'
-	private PreparedStatement assignCategory;		// Statement that inserts an entry into 'contains'
-	private PreparedStatement associateKeyword;		// Statement that associates a keyword with a problem id
+	private PreparedStatement newQuestion;		// Statement that inserts a new question into 'problem'
+	private PreparedStatement newCategory;		// Statement that inserts a new category into 'category'
+	private PreparedStatement newKeyword;		// statement that inserts a new keyword into 'keywords'
+	private PreparedStatement assignCategory;	// Statement that inserts an entry into 'contains'
+	private PreparedStatement associateKeyword;	// Statement that associates a keyword with a problem id
 	
 	private PreparedStatement matchingProblems;		// Statement selecting problems with the same content
 	private PreparedStatement matchingCategories;	// Statement selecting category with matching 'category_name'
 	private PreparedStatement matchingAssignment;	// Statement selecting matching entries in 'contains'
 	private PreparedStatement matchingAssociation;	// Statement selecting matching entries in 'associated'
+	
 	private PreparedStatement matchingKidInKeywordTable; // Statement selecting keyword id with matching 'keyword'
 
 
@@ -62,6 +66,15 @@ public class ProblemDao {
 					"LEFT OUTER JOIN contains C ON P.pid = C.pid " +
 					"WHERE cid = ? " +
 					"ORDER BY order_num");
+			
+			// Statement selecting problems with matching associated keywords
+			search = connection.prepareStatement(
+					"SELECT P.pid, content, order_num, C.cid " +
+					"FROM problem P " +
+					"LEFT OUTER JOIN contains C ON P.pid = C.pid " +
+					"JOIN associated A on A.pid = P.pid " +
+					"JOIN keyword K on K.kid = A.kid " +
+					"WHERE K.keyword = ?");
 			
 			// Prepares statement that retrieves categories
 			categories = connection.prepareStatement(
@@ -137,6 +150,29 @@ public class ProblemDao {
 		createContainsTable.execute();
 	}
 	
+	// Returns the results of a keyword search
+	public List<Problem> getSearchResults(List<String> searchTerms) 
+			throws SQLException {
+		
+		// Set of non-duplicate search results
+		HashSet<Problem> searchResults = new HashSet<Problem>();
+		ResultSet rs; // Results of executing each query
+		
+		// Adds the result of the query for each search term to searchResults
+		for (String term : searchTerms) {
+			term = term.replaceAll("\\s",  ""); // Removes spaces
+			
+			// Performs search query
+			search.setString(1, term);
+			rs = search.executeQuery();
+			
+			// Adds the results
+			addResultSetToProblemCollection(rs, searchResults);
+		}
+		
+		return new ArrayList<Problem>(searchResults);
+	}
+	
 	// Returns a list of problems with matching cid
 	public List<Problem> getProblemList(int cid) throws SQLException {
 		List<Problem> problist = new ArrayList<Problem>();
@@ -171,6 +207,26 @@ public class ProblemDao {
 		}
 		
 		return problist;
+	}
+	
+	private void addResultSetToProblemCollection(ResultSet rs, Collection<Problem> collection) {
+		try {
+
+			while (rs.next()) {
+				Problem prob = new Problem();
+
+				// Sets properties of each problem bean
+				prob.setPid(rs.getInt(1));
+				prob.setContent(rs.getString(2));
+				prob.setOrder_num(rs.getInt(3));
+				prob.setCid(rs.getInt(4));
+
+				// Adds each problem to the list
+				collection.add(prob);
+			}
+		} catch (SQLException sqlException) {
+			sqlException.printStackTrace();
+		}
 	}
 	
 	// Returns all of the categories in the table 'contains'
