@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `category` (
 );
 
 --
--- CREATE contains table
+-- CREATE contains table - problem category mapping
 --
 CREATE TABLE IF NOT EXISTS `contains` (
     `cid` int unsigned NOT NULL, 
@@ -169,6 +169,18 @@ CREATE TABLE IF NOT EXISTS `contains` (
 -- CREATE keyword table
 --
 CREATE TABLE IF NOT EXISTS `keyword` (
-	`cid` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `category_name` varchar(256) NOT NULL UNIQUE
-)
+	`kid` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `keyword` varchar(256) NOT NULL UNIQUE
+);
+
+--
+-- CREATE related table - keyword problem mapping
+--
+CREATE TABLE IF NOT EXISTS `related` (
+	`kid` int unsigned NOT NULL, 
+    `pid` int unsigned NOT NULL, 
+
+    FOREIGN KEY (`kid`) REFERENCES `keyword`(`kid`),
+    FOREIGN KEY (`pid`) REFERENCES `problem` (`pid`)
+
+);
