@@ -42,7 +42,7 @@ public class ProblemDao {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mathprobdb1", "root", "");
 			
-			//createTables(); // Creates the tables 'contains' and 'category'
+			createTables(); // Creates the tables 'contains' and 'category'
 			
 			// Prepares statement that retrieves problems and category ids
 			results = connection.prepareStatement(

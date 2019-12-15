@@ -9,9 +9,6 @@
  */
 
 $(document).ready(function(){
-	alert("Worked!");
-});
-	/*
 	
 	// Prepares form elements when the user selects an assignment category
 	$('select[name="assignment-category"]').change(function(){
@@ -69,4 +66,4 @@ $(document).ready(function(){
 		
 		$(this).attr("type", "submit");
 	})
-})*/
+})

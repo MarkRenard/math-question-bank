@@ -38,7 +38,6 @@ public class ListMathServlet extends HttpServlet {
 		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
 		
-		System.out.println("listmath servlet running!");
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
 		
