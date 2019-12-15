@@ -9,9 +9,6 @@
  */
 
 $(document).ready(function(){
-	alert("Worked!");
-});
-	/*
 	
 	// Prepares form elements when the user selects an assignment category
 	$('select[name="assignment-category"]').change(function(){
@@ -42,7 +39,7 @@ $(document).ready(function(){
 			} else {
 				$(this).attr("style", "display: none");
 			}
-		})
+		});
 	}
 	
 	// Shows elements of class elementClass with identical cid, hides others
@@ -69,4 +66,6 @@ $(document).ready(function(){
 		
 		$(this).attr("type", "submit");
 	})
-})*/
+	
+	// Reveals the keywords text box when the user clicks a keywords button
+});

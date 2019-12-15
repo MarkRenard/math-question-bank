@@ -118,6 +118,18 @@
 										</td>
 									</tr>
 									
+									<!--  New keywords form -->
+									<form id="new-keywords-form" action="listmath" method="POST">
+										<tr>
+											<td width="70%" class="text-center">
+												<input id="keywords-text" type="hidden" class="form-control" name="new-keywords"/>
+											</td>
+											<td width="30%">
+												<input id="keywords-submit" type="hidden" class="form-control" value="Enter Keywords" />		
+											</td>
+											<input id="keywords-hidden-form-element" type="hidden" name="pid"/>
+										</tr>
+									</form>
 								</table>
 							</td>
 						</tr>
@@ -138,14 +150,22 @@
 								<td id="pid<%=prob.getPid()%>" width="8%" class="text-center"><%=prob.getPid()%></td>
 								
 								<!-- Problem content column -->
-								<td width="84%"><%=prob.getContent()%></td>
+								<td width="76%"><%=prob.getContent()%></td>
 								
-								<!-- Button column -->
+								<!-- Assignment button column -->
 								<td width="8%">
 									<button type="button" class="btn btn-default btn-sm assign-button" style="display:none" cid="<%=prob.getCid() %>" pid="<%=prob.getPid() %>">
 						        		<span class="glyphicon glyphicon-plus assign-glyphicon" style="display:none" cid="<%=prob.getCid() %>" pid="<%=prob.getPid() %>">Assign</span>
 						        	</button>
 									<span class="glyphicon glyphicon-check added-glyphicon" style="display:none" cid="<%=prob.getCid() %>" pid="<%=prob.getPid() %>">Added</span>
+								</td>
+								
+								<!-- Keyword button column -->
+								<td width="8%">
+									<button type="button" class="btn btn-default btn-sm keywords-button" style="display:inline" cid="<%=prob.getCid() %>" pid="<%=prob.getPid() %>">
+						        		<span class="glyphicon glyphicon-plus keywords-glyphicon" style="display:inline" pid="<%=prob.getPid() %>">Keywords</span>
+						        	</button>
+									<span class="glyphicon glyphicon-check added-glyphicon" style="display:none" pid="<%=prob.getPid() %>">Add</span>
 								</td>
 							</tr>
 							<%
