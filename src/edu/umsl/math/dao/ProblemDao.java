@@ -35,6 +35,7 @@ public class ProblemDao {
 	private PreparedStatement matchingProblems;		// Statement selecting problems with the same content
 	private PreparedStatement matchingCategories;	// Statement selecting category with matching 'category_name'
 	private PreparedStatement matchingAssignment;	// Statement selecting matching entries in 'contains'
+	private PreparedStatement matchingPidInKeywordTable; // Statement selecting problem id with matching 'keyword'
 
 
 	public ProblemDao() throws Exception {
@@ -90,6 +91,10 @@ public class ProblemDao {
 			
 			matchingAssignment = connection.prepareStatement(
 					"SELECT * FROM contains WHERE cid = ? AND pid = ?");
+			
+			// Prepares statement selecting matching keywords
+			matchingPidInKeywordTable = connection.prepareStatement(
+					"SELECT kid FROM keyword WHERE keyword = ? LIMIT 1");
 			
 			// Prepares statement that assigns a problem to a category
 			assignCategory = connection.prepareStatement(
@@ -202,8 +207,10 @@ public class ProblemDao {
 		}
 	}
 	
-	// Adds a new keyword to the keywords table
-	public void addKeywords(List<String> keywords) throws SQLException {
+	// Adds a new keyword to the keywords table, associates with pid in related table
+	public void addKeywords(List<String> keywords, int pid) throws SQLException {
+		int kid; // Keyword id of each new keyword
+		
 		System.out.println("probdao: addKeywords EXECUTING!");
 		if (keywords.size() < 1) return;
 		System.out.println("probdao: keywords.size() > 0!!!");
@@ -211,9 +218,27 @@ public class ProblemDao {
 		// int i = 0; i < keywords.size(); i++
 		for (String keyword : keywords) {
 			keyword = keyword.replaceAll("\\s",  ""); // Removes whitespace
-			System.out.println("probdao: adding keyword " + keyword);
-			newKeyword.setString(1, keyword);
-			newKeyword.executeUpdate();
+			
+			// Adds the new keyword to the keyword table if it doesn't exist already
+			if (keywordIsUnique(keyword)) {
+				System.out.println("probdao: adding keyword " + keyword);
+				newKeyword.setString(1, keyword);
+				newKeyword.executeUpdate();
+			} else {
+				System.out.println("probdao: keyword " + keyword + " is not unique!");
+			}
+			
+			// Gets keyword id of keyword
+			matchingPidInKeywordTable.setString(1, keyword);
+			ResultSet rs = matchingPidInKeywordTable.executeQuery();
+			rs.next();
+			kid = rs.getInt(1);
+			System.out.println("probdao - kid of keyword " + keyword +": " + kid);
+			
+			// Associates pid in related table
+//			associateKeyword.setInt(1, kid);
+//			associateKeyword.setInt(2, pid);
+//			associateKeyword.executeUpdate();
 		}
 	}
 	
@@ -247,6 +272,14 @@ public class ProblemDao {
 		matchingAssignment.setInt(1, cid);
 		matchingAssignment.setInt(2, pid);
 		ResultSet rs = matchingAssignment.executeQuery();
+		
+		return !rs.next(); // False if the result set is non-empty
+	}
+	
+	// Returns true if there is no matching keyword in the keyword table
+	public boolean keywordIsUnique(String keyword) throws SQLException {
+		matchingPidInKeywordTable.setString(1, keyword);
+		ResultSet rs = matchingPidInKeywordTable.executeQuery();
 		
 		return !rs.next(); // False if the result set is non-empty
 	}
