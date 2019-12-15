@@ -62,7 +62,7 @@
 									
 									<!-- Drop-down list of categories for display -->
 									<tr>
-										<form action="listmath" method="POST">
+										<form action="listmath" method="GET">
 											<td>
 												<select name="display-category" size=1>
 													<option value="0" disabled selected>Select a Category</option>
@@ -80,7 +80,7 @@
 									</tr>
 									
 									<!-- New question form -->
-									<form action="listmath" method="POST">
+									<form action="listmath" method="GET">
 										<tr>
 											<td width="70%" class="text-center">
 												<input type="text" class="form-control" name="new-question"/>
@@ -92,7 +92,7 @@
 									</form>
 										
 									<!--  New category form -->
-									<form action="listmath" method="POST">
+									<form action="listmath" method="GET">
 										<tr>
 											<td width="70%" class="text-center">
 												<input type="text" class="form-control" name="new-category"/>
@@ -119,7 +119,7 @@
 									</tr>
 									
 									<!--  New keywords form -->
-									<form id="new-keywords-form" action="listmath" method="POST">
+									<form id="new-keywords-form" action="listmath" method="GET">
 										<tr>
 											<td width="70%" class="text-center">
 												<input id="keywords-text" type="hidden" class="form-control" name="new-keywords"/>
@@ -127,7 +127,7 @@
 											<td width="30%">
 												<input id="keywords-submit" type="hidden" class="form-control" value="Enter Keywords" />		
 											</td>
-											<input id="keywords-hidden-form-element" type="hidden" name="pid"/>
+											<input id="keywords-hidden-form-element" type="hidden" name="keywords-pid"/>
 										</tr>
 									</form>
 								</table>
@@ -135,11 +135,12 @@
 						</tr>
 						
 						<!-- Category assignment form -->
-						<form action="listmath" method="POST">
+						<form action="listmath" method="GET">
 
 							<!-- Hidden form elements -->
 							<input type="hidden" id="assignment-cid" name="assignment-cid">
 							<input type="hidden" id="assignment-pid" name="assignment-pid">
+							<input type="hidden" id="keywords-pid" name="keywords-pid">
 						
 							<!-- Table of problems -->
 							<%

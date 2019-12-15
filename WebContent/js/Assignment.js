@@ -14,11 +14,12 @@ $(document).ready(function(){
 	$('select[name="assignment-category"]').change(function(){
 		var cid = $(this).val();
 		
+		alert("Change!");
 		// Sets category id in hidden form element
 		$("#assignment-cid").val(cid);
 		
 		prepareAssignmentButtons(cid);
-	})
+	});
 		
 	// Shows each assignment button not in the selected category, hides others
 	function prepareAssignmentButtons(cid){
@@ -54,7 +55,7 @@ $(document).ready(function(){
 			} else {
 				$(this).attr("style", "display: none");
 			}
-		})
+		});
 	}
 	
 	// Sets the problem id when a category assignment button is clicked
@@ -64,8 +65,19 @@ $(document).ready(function(){
 		// Sets problem id in hidden form element
 		$("#assignment-pid").val(pid);
 		
+		// Submits form
 		$(this).attr("type", "submit");
-	})
+	});
 	
 	// Reveals the keywords text box when the user clicks a keywords button
+	$(".keywords-button").click(function(){
+		$("#keywords-text").attr("type", "text");
+		$("#keywords-submit").attr("type", "submit");
+		
+		var pid = $(this).attr("pid");
+		alert("Pid: " + pid);
+		
+		// Sets problem id in hidden form element
+		$("#keywords-hidden-form-element").val(pid);
+	});
 });

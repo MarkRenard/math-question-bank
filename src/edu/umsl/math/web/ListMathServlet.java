@@ -30,10 +30,12 @@ public class ListMathServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String newQuestion;			// Stores a new question from the request if one exists
 		String newCategory;			// Stores a new category from the request if one exists
-		int displayCategory;		// Stores the category of problem to be displayed
+		String newKeywords;			// String of new comma separated keywords, if they exist
 		
 		int assignmentPid = -1;		// The problem id for an assignment operation
 		int assignmentCid = -1;		// The category id for an assignment operation
+		int keywordsPid = -1;		// The problem id for a new keywords operation
+		int displayCategory;		// Stores the category of problem to be displayed
 		
 		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
@@ -42,15 +44,18 @@ public class ListMathServlet extends HttpServlet {
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
 		
-		// Retrieves new questions or categories
+		// Retrieves new questions, categories, or keywords
 		newQuestion = (String) request.getParameter("new-question");
 		newCategory = (String) request.getParameter("new-category");
+		newKeywords = (String) request.getParameter("new-keywords");
 		
 		// Retrieves new problem IDs and category IDs from the request and perform validation
 		assignmentPid = validatedId((String) request.getParameter("assignment-pid"));
 		assignmentCid = validatedId((String) request.getParameter("assignment-cid"));
+		keywordsPid = validatedId((String) request.getParameter("keywords-pid"));
 		
 		displayCategory = validatedId((String)request.getParameter("display-category"));
+		
 			
 		try {
 			probdao = new ProblemDao();
