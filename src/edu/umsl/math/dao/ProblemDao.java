@@ -29,6 +29,7 @@ public class ProblemDao {
 	
 	private PreparedStatement newQuestion;			// Statement that inserts a new question into 'problem'
 	private PreparedStatement newCategory;			// Statement that inserts a new category into 'category'
+	private PreparedStatement newKeyword;			// statement that inserts a new keyword into 'keywords'
 	private PreparedStatement assignCategory;		// Statement that inserts an entry into 'contains'
 	
 	private PreparedStatement matchingProblems;		// Statement selecting problems with the same content
@@ -72,6 +73,11 @@ public class ProblemDao {
 			// Prepares statement that enters a new category into the database
 			newCategory = connection.prepareStatement(
 					"INSERT INTO category (category_name) "
+					+ "VALUES (?)");
+			
+			// Prepares statement that enters a new keyword into the database
+			newKeyword = connection.prepareStatement(
+					"INSERT INTO keyword (keyword) "
 					+ "VALUES (?)");
 			
 			// Prepares statement that retrieves problems with matching content
@@ -193,6 +199,21 @@ public class ProblemDao {
 		if (category_name != null && category_name != "") {
 			newCategory.setString(1, category_name);
 			newCategory.executeUpdate();
+		}
+	}
+	
+	// Adds a new keyword to the keywords table
+	public void addKeywords(List<String> keywords) throws SQLException {
+		System.out.println("probdao: addKeywords EXECUTING!");
+		if (keywords.size() < 1) return;
+		System.out.println("probdao: keywords.size() > 0!!!");
+			
+		// int i = 0; i < keywords.size(); i++
+		for (String keyword : keywords) {
+			keyword = keyword.replaceAll("\\s",  ""); // Removes whitespace
+			System.out.println("probdao: adding keyword " + keyword);
+			newKeyword.setString(1, keyword);
+			newKeyword.executeUpdate();
 		}
 	}
 	

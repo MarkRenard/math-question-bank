@@ -93,6 +93,7 @@ public class ListMathServlet extends HttpServlet {
 			// Adds new keywords to the database
 			if (keywordsAreValid(newKeywords)) {
 				newKeywordsList = Arrays.asList(newKeywords.split(","));
+				probdao.addKeywords(newKeywordsList);
 			}
 			
 			// Retrieves lists from the database
