@@ -7,6 +7,7 @@
 package edu.umsl.math.web;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.umsl.math.beans.*;
@@ -39,6 +40,8 @@ public class ListMathServlet extends HttpServlet {
 		
 		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
+		
+		List<String> newKeywordsList;	// List of keywords to add to the database
 		
 		System.out.println("listmath servlet running!");
 		
@@ -83,6 +86,11 @@ public class ListMathServlet extends HttpServlet {
 			// Performs category assignment if a category has been assigned
 			if (assignmentPid > 0 && assignmentCid > 0) {
 				probdao.assignCategoryToProblem(assignmentCid, assignmentPid);
+			}
+			
+			// Adds new keywords to the database
+			if (keywordsAreValid(newKeywords)) {
+				newKeywordsList = Arrays.asList(newKeywords.split(","));
 			}
 			
 			// Retrieves lists from the database
@@ -135,6 +143,11 @@ public class ListMathServlet extends HttpServlet {
 	
 	// Validates the string for a new category
 	private static boolean categoryIsValid(String str) {
+		return (str != null && str != "");
+	}
+	
+	// Validates the string of new keywords
+	private static boolean keywordsAreValid(String str) {
 		return (str != null && str != "");
 	}
 
