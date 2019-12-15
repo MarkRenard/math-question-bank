@@ -174,9 +174,9 @@ CREATE TABLE IF NOT EXISTS `keyword` (
 );
 
 --
--- CREATE related table - keyword problem mapping
+-- CREATE associated table - keyword problem mapping
 --
-CREATE TABLE IF NOT EXISTS `related` (
+CREATE TABLE IF NOT EXISTS `associated` (
 	`kid` int unsigned NOT NULL, 
     `pid` int unsigned NOT NULL, 
     

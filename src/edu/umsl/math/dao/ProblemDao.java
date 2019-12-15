@@ -31,11 +31,13 @@ public class ProblemDao {
 	private PreparedStatement newCategory;			// Statement that inserts a new category into 'category'
 	private PreparedStatement newKeyword;			// statement that inserts a new keyword into 'keywords'
 	private PreparedStatement assignCategory;		// Statement that inserts an entry into 'contains'
+	private PreparedStatement associateKeyword;		// Statement that associates a keyword with a problem id
 	
 	private PreparedStatement matchingProblems;		// Statement selecting problems with the same content
 	private PreparedStatement matchingCategories;	// Statement selecting category with matching 'category_name'
 	private PreparedStatement matchingAssignment;	// Statement selecting matching entries in 'contains'
-	private PreparedStatement matchingPidInKeywordTable; // Statement selecting problem id with matching 'keyword'
+	private PreparedStatement matchingAssociation;	// Statement selecting matching entries in 'associated'
+	private PreparedStatement matchingKidInKeywordTable; // Statement selecting keyword id with matching 'keyword'
 
 
 	public ProblemDao() throws Exception {
@@ -89,16 +91,25 @@ public class ProblemDao {
 			matchingCategories = connection.prepareStatement(
 					"SELECT * FROM category WHERE category_name = ?");
 			
+			// Statement selecting matching entries in 'contains'
 			matchingAssignment = connection.prepareStatement(
 					"SELECT * FROM contains WHERE cid = ? AND pid = ?");
 			
+			// Statement selecting matching entries in 'associated'
+			matchingAssociation = connection.prepareStatement(
+					"SELECT * FROM associated WHERE kid = ? AND pid = ?");
+			
 			// Prepares statement selecting matching keywords
-			matchingPidInKeywordTable = connection.prepareStatement(
+			matchingKidInKeywordTable = connection.prepareStatement(
 					"SELECT kid FROM keyword WHERE keyword = ? LIMIT 1");
 			
 			// Prepares statement that assigns a problem to a category
 			assignCategory = connection.prepareStatement(
-					"INSERT INTO contains (cid, pid) values (?, ?)");
+					"INSERT INTO contains (cid, pid) VALUES (?, ?)");
+			
+			// Prepares statement that associates a problem with a keyword
+			associateKeyword = connection.prepareStatement(
+					"INSERT INTO associated (kid, pid) VALUES (?, ?)");
 			
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -207,7 +218,7 @@ public class ProblemDao {
 		}
 	}
 	
-	// Adds a new keyword to the keywords table, associates with pid in related table
+	// Adds a new keyword to the keywords table, associates with pid in associated table
 	public void addKeywords(List<String> keywords, int pid) throws SQLException {
 		int kid; // Keyword id of each new keyword
 		
@@ -229,16 +240,25 @@ public class ProblemDao {
 			}
 			
 			// Gets keyword id of keyword
-			matchingPidInKeywordTable.setString(1, keyword);
-			ResultSet rs = matchingPidInKeywordTable.executeQuery();
+			matchingKidInKeywordTable.setString(1, keyword);
+			ResultSet rs = matchingKidInKeywordTable.executeQuery();
 			rs.next();
 			kid = rs.getInt(1);
 			System.out.println("probdao - kid of keyword " + keyword +": " + kid);
 			
-			// Associates pid in related table
-//			associateKeyword.setInt(1, kid);
-//			associateKeyword.setInt(2, pid);
-//			associateKeyword.executeUpdate();
+			System.out.println("problemdao - kid: " + kid);
+			System.out.println("problemdao - pid: " + pid);
+			System.out.println("problemdao - unique: " + associationIsUnique(kid, pid));
+			
+			// Associates kid with pid in associated table if the relation hasn't already been added
+			if (associationIsUnique(kid, pid)) {
+				associateKeyword.setInt(1, kid);
+				associateKeyword.setInt(2, pid);
+				associateKeyword.executeUpdate();	
+				System.out.println("probdao - association ADDED: " + kid + ", " + pid);
+			} else {
+				System.out.println("probdao - association is NOT unique: " + kid + ", " + pid);
+			}
 		}
 	}
 	
@@ -256,7 +276,7 @@ public class ProblemDao {
 		matchingProblems.setString(1, problemContent);
 		ResultSet rs = matchingProblems.executeQuery();
 		
-		return !rs.next(); // False if the result set is non-empty
+		return !rs.next(); // True if the result set is empty
 	}
 	
 	// This method returns true if there is no category with a matching name
@@ -264,24 +284,33 @@ public class ProblemDao {
 		matchingCategories.setString(1, categoryName);
 		ResultSet rs = matchingCategories.executeQuery();
 		
-		return !rs.next(); // False if the result set is non-empty
+		return !rs.next(); // True if the result set is empty
 	}
 	
-	// This method returns true if there is no category with a matching name
+	// This method returns true if there is no matching category-problem mapping
 	public boolean assignmentIsUnique(int cid, int pid) throws SQLException {
 		matchingAssignment.setInt(1, cid);
 		matchingAssignment.setInt(2, pid);
 		ResultSet rs = matchingAssignment.executeQuery();
 		
-		return !rs.next(); // False if the result set is non-empty
+		return !rs.next(); // True if the result set is empty
+	}
+	
+	// Returns true if there is no matching keyword-problem mapping
+	public boolean associationIsUnique(int kid, int pid) throws SQLException {
+		matchingAssociation.setInt(1, kid);
+		matchingAssociation.setInt(2, pid);
+		ResultSet rs = matchingAssociation.executeQuery();
+		
+		return !rs.next(); // True if the result set is empty
 	}
 	
 	// Returns true if there is no matching keyword in the keyword table
 	public boolean keywordIsUnique(String keyword) throws SQLException {
-		matchingPidInKeywordTable.setString(1, keyword);
-		ResultSet rs = matchingPidInKeywordTable.executeQuery();
+		matchingKidInKeywordTable.setString(1, keyword);
+		ResultSet rs = matchingKidInKeywordTable.executeQuery();
 		
-		return !rs.next(); // False if the result set is non-empty
+		return !rs.next(); // True if the result set is empty
 	}
 
 }
