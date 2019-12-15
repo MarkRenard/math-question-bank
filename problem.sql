@@ -1,29 +1,5 @@
--- markRenardProblem.sql is a mostly unmodified version of the file problem.sql
--- that is in the files section of canvas, except for this opening comment and
--- lines 28 - 30. The DROP statement on line 28 needs to be un-commented if the
--- database `mathprobdb1` already exists.
---
--- There are create statements that execute in ProblemDao.java of my project 2
--- submission which create the `category` and `contains` tables as folows:
--- 
---	// Creates tables category and contains if the dont exist already
---	private void createTables() throws SQLException {
---		// Creates tables `category`
---		PreparedStatement createCategoryTable = connection.prepareStatement(
---				"CREATE TABLE IF NOT EXISTS `category` ( " +
---			    "`cid` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
---			    "`category_name` varchar(256))");
---		createCategoryTable.execute();
---		
---		// Creates table `contains`
---		PreparedStatement createContainsTable = connection.prepareStatement(
---				"CREATE TABLE IF NOT EXISTS `contains` (" + 
---				"    `cid` int unsigned NOT NULL, " + 
---				"    `pid` int unsigned NOT NULL, " + 
---				"    FOREIGN KEY (`cid`) REFERENCES `category`(`cid`), " + 
---				"    FOREIGN KEY (`pid`) REFERENCES `problem` (`pid`))");
---		createContainsTable.execute();
---	}
+-- problem.sql is a script that creates a database with a table of math
+-- problems and related tables of categories and keywords.
 
 -- DROP DATABASE IF EXISTS mathprobdb1;
 CREATE DATABASE IF NOT EXISTS mathprobdb1;
@@ -169,3 +145,30 @@ ALTER TABLE `problem`
 --
 ALTER TABLE `problem`
 MODIFY `pid` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=110;
+
+--
+-- CREATE category table
+--
+CREATE TABLE IF NOT EXISTS `category` (
+    `cid` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `category_name` varchar(256) NOT NULL UNIQUE
+);
+
+--
+-- CREATE contains table
+--
+CREATE TABLE IF NOT EXISTS `contains` (
+    `cid` int unsigned NOT NULL, 
+    `pid` int unsigned NOT NULL, 
+
+    FOREIGN KEY (`cid`) REFERENCES `category`(`cid`),
+    FOREIGN KEY (`pid`) REFERENCES `problem` (`pid`)
+);
+
+--
+-- CREATE keyword table
+--
+CREATE TABLE IF NOT EXISTS `keyword` (
+	`cid` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `category_name` varchar(256) NOT NULL UNIQUE
+)
