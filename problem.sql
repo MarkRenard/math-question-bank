@@ -179,8 +179,8 @@ CREATE TABLE IF NOT EXISTS `keyword` (
 CREATE TABLE IF NOT EXISTS `related` (
 	`kid` int unsigned NOT NULL, 
     `pid` int unsigned NOT NULL, 
-
+    
     FOREIGN KEY (`kid`) REFERENCES `keyword`(`kid`),
-    FOREIGN KEY (`pid`) REFERENCES `problem` (`pid`)
-
+    FOREIGN KEY (`pid`) REFERENCES `problem` (`pid`),
+    CONSTRAINT unique_maping UNIQUE (`kid`, `pid`)
 );
