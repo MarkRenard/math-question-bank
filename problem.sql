@@ -127,18 +127,10 @@ INSERT INTO `problem` (`pid`, `content`, `order_num`) VALUES
 (109, 'Prove that any even number greater or equal to \\(4\\) can be represented as sum of two primes.', 0);
 
 --
--- Indexes for dumped tables
---
-
---
 -- Indexes for table `problem`
 --
 ALTER TABLE `problem`
  ADD PRIMARY KEY (`pid`);
-
---
--- AUTO_INCREMENT for dumped tables
---
 
 --
 -- AUTO_INCREMENT for table `problem`

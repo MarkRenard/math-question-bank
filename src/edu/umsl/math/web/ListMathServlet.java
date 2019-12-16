@@ -66,7 +66,6 @@ public class ListMathServlet extends HttpServlet {
 		assignmentCid = validatedId((String) request.getParameter("assignment-cid"));
 		keywordsPid = validatedId((String) request.getParameter("keywords-pid"));
 		displayCategory = validatedId((String)request.getParameter("display-category"));
-		
 			
 		try {
 			probdao = new ProblemDao();
@@ -102,11 +101,15 @@ public class ListMathServlet extends HttpServlet {
 				probdao.addKeywords(newKeywordsList, keywordsPid);
 			}
 			
-			// Retrieves search results if a search query was entered, all problems otherwise
+			// Retrieves problem list
 			if (keywordSearch != null && keywordSearch != "") {
+				
+				// Retrieves search results if a search query was entered
 				List<String> searchTerms = Arrays.asList(keywordSearch.split(","));
 				problist = probdao.getSearchResults(searchTerms);
 			} else {
+				
+				// Retrieves problems in a category if one was selected, all problems otherwise
 				problist = probdao.getProblemList(displayCategory);
 			}
 			
@@ -119,10 +122,10 @@ public class ListMathServlet extends HttpServlet {
 			System.out.println("Display category: " + displayCategory);
 			System.out.println("New keywords: " + listToString(newKeywordsList));
 	
-			System.out.println("Assignment pid: " + assignmentPid);
+			System.out.println("\nAssignment pid: " + assignmentPid);
 			System.out.println("Assignment cid: " + assignmentCid);
 			
-			System.out.println("Problem list: " + problist);
+			System.out.println("\nProblem list: " + problist);
 			System.out.println("Category list: " + categorylist + "\n");
 			
 			// Sets attributes in request object
