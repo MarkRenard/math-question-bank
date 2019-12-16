@@ -6,15 +6,15 @@
  * When the user selects an assignment category from a drop-down menu, the
  * buttons next to the problems not in that category are displayed. Check
  * marks appear near problems already in that category.
+ * 
+ * 
  */
 
 $(document).ready(function(){
-	
 	// Prepares form elements when the user selects an assignment category
 	$('select[name="assignment-category"]').change(function(){
 		var cid = $(this).val();
 		
-		alert("Change!");
 		// Sets category id in hidden form element
 		$("#assignment-cid").val(cid);
 		
@@ -75,7 +75,6 @@ $(document).ready(function(){
 		$("#keywords-submit").attr("type", "submit");
 		
 		var pid = $(this).attr("pid");
-		alert("Pid: " + pid);
 		
 		// Sets problem id in hidden form element
 		$("#keywords-hidden-form-element").val(pid);

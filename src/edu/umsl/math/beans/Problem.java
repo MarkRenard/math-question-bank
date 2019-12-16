@@ -39,11 +39,38 @@ public class Problem {
 	public void setCid(int cid) {
 		this.cid = cid;
 	}
-
-	public boolean equals(Problem prob) {
-		return this.pid == prob.pid
-				&& this.content == prob.content
-				&& this.order_num == prob.order_num
-				&& this.cid == prob.cid;
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + cid;
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		result = prime * result + order_num;
+		result = prime * result + pid;
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Problem other = (Problem) obj;
+		if (cid != other.cid)
+			return false;
+		if (content == null) {
+			if (other.content != null)
+				return false;
+		} else if (!content.equals(other.content))
+			return false;
+		if (order_num != other.order_num)
+			return false;
+		if (pid != other.pid)
+			return false;
+		return true;
 	}
 }
