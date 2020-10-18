@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.umsl.math.dao.CategoryDao;
 import edu.umsl.math.dao.ProblemDao;
 
 /**
@@ -43,6 +44,7 @@ public class ListMathServlet extends HttpServlet {
 		
 		String errorMsg = null;  	// Message to display on error
 		ProblemDao probdao = null;  // Problem database access object
+		CategoryDao catdao = null;  // Category database access object
 		
 		List<String> newKeywordsList;	// Keywords to be add to the database
 		List<Problem> problist;			// Problems to display
@@ -69,6 +71,7 @@ public class ListMathServlet extends HttpServlet {
 			
 		try {
 			probdao = new ProblemDao();
+			catdao = new CategoryDao();
 			
 			// Adds a new question to the database if it's nonempty and unique
 			if(problemIsValid(newQuestion)) {
@@ -82,8 +85,8 @@ public class ListMathServlet extends HttpServlet {
 			
 			// Adds a new category to the database if it's nonempty and unique
 			if(categoryIsValid(newCategory)) {
-				if (probdao.categoryIsUnique(newCategory)) {
-					probdao.addCategory(newCategory);
+				if (catdao.categoryIsUnique(newCategory)) {
+					catdao.addCategory(newCategory);
 				} else {
 					errorMsg = "Error: The category \"" 
 							+ newCategory + "\" already exists.";
@@ -114,7 +117,7 @@ public class ListMathServlet extends HttpServlet {
 			}
 			
 			// Retrieves the list of categories from the database
-			categorylist = probdao.getCategoryList();
+			categorylist = catdao.getCategoryList();
 			
 			// Print statements for debugging
 			System.out.println("New question: " + newQuestion);
